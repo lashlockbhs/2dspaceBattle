@@ -4,16 +4,28 @@ let height;
 
 let onclick = (x, y) => {};
 let onkeydown = (k) => {};
+let onmousedown = (x, y) => {};
+let onmouseup = (x, y) => {};
+let onmove = (x, y) => {};
+
 
 document.onkeydown = (e) => {
   onkeydown(e.key)
 };
 
+
 const registerOnclick = (fn) => (onclick = fn);
 const registerOnKeyDown = (fn) => (onkeydown = fn);
+const OnMouseDown = (fn) => (onmousedown = fn);
+const OnMouseUp = (fn) => (onmouseup = fn);
+const OnMouseMove = (fn) => (onmove = fn);
 
 const setCanvas = (canvas) => {
   canvas.onclick = (e) => onclick(e.offsetX, e.offsetY);
+  canvas.onmousedown = (e) => onmousedown(e.offsetX, e.offsetY);
+  canvas.onmouseup = (e) => onmouseup(e.offsetX, e.offsetY);
+  canvas.onmousemove = (e) => onmove(e.offsetX, e.offsetY);
+
   ctx = canvas.getContext('2d');
   width = canvas.width;
   height = canvas.height;
@@ -125,4 +137,7 @@ export {
   animate,
   registerOnclick,
   registerOnKeyDown,
+  OnMouseDown,
+  OnMouseUp,
+  OnMouseMove,
 };
