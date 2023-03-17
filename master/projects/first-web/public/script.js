@@ -31,7 +31,27 @@ const drawStars = (percent) => {
       if (Math.random() * 100 < percent) drawFilledRect(x, y, Math.random() * 1.2, Math.random() * 1.5, "white");
     }
   }
+};
+
+const blockClicked = (x, y) => {
+  const clicked = [];
+  for (const ship of ships) {
+    let num = 0;
+    for (const block of ship.blocks) {
+
+      if (x > block[0].x && y > block[0].y && x < block[2].x && y < block[2].y) {
+        clicked.push({ block, ship, num });
+      }
+      num++;
+    }
+  }
+  return clicked;
 }
+
+const getEffects = () =>{
+  
+}
+
 const start = () => {
   animateStart = true;
 }
@@ -42,7 +62,9 @@ const ships = [];
 registerOnclick((x, y) => {
   drawFilledCircle(x, y, 2, "white")
   cords.push({ x, y })
-
+  for(const block of blockClicked(x, y)){
+    block.ship.components.push({name : document.getElementById("compName"), effects : []})
+  };
 })
 registerOnKeyDown((k) => {
   if (k === 'Enter') {
@@ -52,10 +74,10 @@ registerOnKeyDown((k) => {
     blocks = [];
     cords = [];
 
-    for(const e of ships){
+    for (const e of ships) {
       e.drawShipBase();
     }
-    
+
   } else if (k === 'K') {
     //kill
     animateStart = false
@@ -70,18 +92,17 @@ let endPos;
 let dragStart;
 OnMouseDown((x, y) => {
   if (!animateStart) {
-    if()
-      startPos = { x, y };
-      dragStart = true;
+    startPos = { x, y };
+    dragStart = true;
   };
 
 });
 OnMouseUp((x, y) => {
   if (!animateStart) {
     drawRect(startPos.x, startPos.y, (startPos.x - x) * -1, (startPos.y - y) * -1, "white", 1);
-    blocks.push([{ x: startPos.x, y: startPos.y }, {x, y : startPos.y}, {x, y}, {x : startPos.x, y}])
+    blocks.push([{ x: startPos.x, y: startPos.y }, { x, y: startPos.y }, { x, y }, { x: startPos.x, y }])
     dragStart = false;
-    
+
   };
 });
 
@@ -98,23 +119,23 @@ OnMouseMove((x, y) => {
 */
 
 class ship {
-  constructor(name, guns, size, components, blocks) {
+  constructor(name, guns, size, blocks) {
     this.name = name;
     this.guns = guns;
     this.size = size;
-    this.components = components; //{name: "Engine", pos : 1-amount of component slots, }
+    this.components = [];  //{name : "eng", effects : [{name : speed, mod : 10}, {name : manuavorability, mod : 5}], pos : 1}
     this.rotation = 0;
     this.blocks = blocks;
   }
 
   drawShipBase() {
     for (let i = 0; i < this.blocks.length; i++) {
-      for(let a = 0; a < 4; a++){
-        if(a === 3 ){
+      for (let a = 0; a < 4; a++) {
+        if (a === 3) {
           drawLine(this.blocks[i][a].x, this.blocks[i][a].y, this.blocks[i][0].x, this.blocks[i][0].y, "white", 1)
         }
-        else{
-          drawLine(this.blocks[i][a].x, this.blocks[i][a].y, this.blocks[i][a+1].x, this.blocks[i][a+1].y, "white", 1)
+        else {
+          drawLine(this.blocks[i][a].x, this.blocks[i][a].y, this.blocks[i][a + 1].x, this.blocks[i][a + 1].y, "white", 1)
 
         }
 
